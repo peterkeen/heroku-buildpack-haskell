@@ -13,33 +13,38 @@ mkdir -p $CACHE_DIR
 cd $CACHE_DIR
 
 if [ ! -e ghc -o ! -e .cabal ]; then
-echo ""
-echo "Preparing Haskell Platform..."
+  echo ""
+  echo "Preparing Haskell Platform..."
 
-if [ ! -e ghc ]; then
-echo -n "-----> Fetching GHC... "
-curl --silent --max-time 120 -L "$GHC_PACKAGE_URL" | tar xz
-echo "done"
+  if [ ! -e ghc ]; then
+    echo -n "-----> Fetching GHC... "
+    curl --silent --max-time 120 -L "$GHC_PACKAGE_URL" | tar xz
+    echo "done"
+  fi
+
+  if [ ! -e .cabal ]; then
+    echo -n "-----> Fetching Cabal... "
+    curl --silent --max-time 120 -L "$CABAL_PACKAGE_URL" | tar xz
+    echo "done"
+  fi
+
 fi
 
-if [ ! -e .cabal ]; then
-echo -n "-----> Fetching Cabal... "
-curl --silent --max-time 120 -L "$CABAL_PACKAGE_URL" | tar xz
-echo "done"
-fi
-
-fi
-
-echo -n "-----> Bundling GHC... "
-GHC_VERSION=`ghc/bin/ghc --version | perl -n -e '/version (\d\.\d\.\d)/ && print $1'`
+echo -n "-----> Unpacking... "
 cp -R ghc /app
-echo "version $GHC_VERSION"
+echo "done"
 
-echo -n "-----> Bundling Cabal... "
+
+echo ""
+echo "Haskell Platform ready"
+GHC_VERSION=`ghc/bin/ghc --version | perl -n -e '/version (\d\.\d\.\d)/ && print $1'`
+echo "-----> Using GHC version $GHC_VERSION"
+
 CABAL_VERSION=`.cabal/bin/cabal --version | perl -n -e '/using version ([0-9\.]+) of the Cabal library/ && print $1'`
-CABAL_BIN=`pwd`/.cabal/bin/cabal
-echo "version $CABAL_VERSION"
+echo "-----> Using Cabal version $CABAL_VERSION"
 
+
+CABAL_BIN=`pwd`/.cabal/bin/cabal
 
 echo ""
 echo "Running pre-compile actions..."
@@ -52,7 +57,7 @@ echo "done"
 
 echo -n "-----> Updating Cabal... "
 export PATH=/app/ghc/bin:$PATH
-.cabal/bin/cabal update
+$CABAL_BIN update
 echo "done"
 
 
