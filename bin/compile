@@ -14,44 +14,63 @@ cd $CACHE_DIR
 
 if [ ! -e ghc -o ! -e .cabal ]; then
   echo ""
-  echo "Preparing Haskell Platform..."
+  echo "Preparing Haskell Platform:"
 
   if [ ! -e ghc ]; then
     echo -n "-----> Fetching GHC... "
+    cd $BUILD_DIR
     curl --silent --max-time 120 -L "$GHC_PACKAGE_URL" | tar xz
+    echo "done"
+  else
+    echo -n "-----> Unpacking cached version of GHC... "
+    cd $BUILD_DIR
+    cp -R $CACHE_DIR/ghc ghc 
     echo "done"
   fi
 
+  cd $CACHE_DIR
   if [ ! -e .cabal ]; then
     echo -n "-----> Fetching Cabal... "
+    cd $BUILD_DIR
     curl --silent --max-time 120 -L "$CABAL_PACKAGE_URL" | tar xz
     echo "done"
+  else
+    echo -n "-----> Unpacking cached version of Cabal... "
+    cd $BUILD_DIR
+    cp -R $CACHE_DIR/.cabal .cabal
+    echo "done" 
   fi
 
 fi
 
-echo -n "-----> Unpacking... "
+echo -n "-----> Installing... "
+cd $BUILD_DIR
 cp -R ghc /app
+
+GHC_BIN_DIR=/app/ghc/bin
+GHC_BIN=$GHC_BIN_DIR/ghc
+CABAL_BIN=$BUILD_DIR/.cabal/bin/cabal
+
+mkdir bin lib
+ln -s /usr/lib/libgmp.so.3 lib/libgmp.so
 echo "done"
 
 
 echo ""
-echo "Haskell Platform ready"
-GHC_VERSION=`ghc/bin/ghc --version | perl -n -e '/version (\d\.\d\.\d)/ && print $1'`
+echo "Haskell Platform ready:"
+GHC_VERSION=`$GHC_BIN --numeric-version`
 echo "-----> Using GHC version $GHC_VERSION"
 
-CABAL_VERSION=`.cabal/bin/cabal --version | perl -n -e '/using version ([0-9\.]+) of the Cabal library/ && print $1'`
+CABAL_VERSION=`$CABAL_BIN --version | perl -n -e '/using version ([0-9\.]+) of the Cabal library/ && print $1'`
 echo "-----> Using Cabal version $CABAL_VERSION"
 
 
-CABAL_BIN=`pwd`/.cabal/bin/cabal
-
 echo ""
-echo "Running pre-compile actions..."
+echo "Running pre-compile actions:"
 echo -n "-----> Configuring ghc-pkg... "
-ghc/bin/ghc-pkg describe base > base.conf
+$GHC_BIN_DIR/ghc-pkg describe base > base.conf
 sed -i "s#ld-options:#ld-options: -L`pwd`/lib#" base.conf
-ghc/bin/ghc-pkg update base.conf > /dev/null 2>&1
+$GHC_BIN_DIR/ghc-pkg update base.conf > /dev/null 2>&1
 rm base.conf
 echo "done"
 
@@ -62,7 +81,7 @@ echo "done"
 
 
 echo ""
-echo "Beginning compile..."
+echo "Beginning compile:"
 cd $BUILD_DIR
 echo -n "-----> Running cabal install... "
 $CABAL_BIN install
@@ -70,7 +89,15 @@ echo "done"
 
 
 echo ""
-echo "Running post-compile actions..."
-echo -n "-----> Cleaning up..."
+echo "Running post-compile actions:"
+echo -n "-----> Caching GHC..."
+rm -rf $CACHE_DIR/ghc
+cp -R ghc $CACHE_DIR/ghc
 echo "done"
 
+echo -n "-----> Caching GHC..."
+rm -rf $CACHE_DIR/.cabal
+cp -R .cabal $CACHE_DIR/.cabal
+echo "done"
+
+echo "Finished successfully!"

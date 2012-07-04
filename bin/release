@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
 
-echo "release called"
-exit 1
+$BUILD_DIR=$1
+
+cat <<EOF
+---
+config_vars:
+  PATH: $BUILD_DIR/.cabal/bin:$BUILD_DIR/bin:/usr/local/bin:/usr/bin:/bin
+EOF
