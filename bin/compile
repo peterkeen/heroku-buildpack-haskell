@@ -2,6 +2,7 @@
 
 GHC_PACKAGE_URL="http://s3.amazonaws.com/heroku-buildpack-haskell/ghc.tar.gz"
 CABAL_PACKAGE_URL="http://s3.amazonaws.com/heroku-buildpack-haskell/cabal.tar.gz"
+LIBGMP_PACKAGE_URL="http://s3.amazonaws.com/buildpack-haskell/libgmp-5.0.5.tar.bz2"
 
 set -e
 
@@ -44,6 +45,11 @@ if [ ! -e ghc -o ! -e .cabal ]; then
 fi
 
 echo -n "-----> Installing... "
+
+cd $CACHE_DIR
+curl --silent --max-time 30 -L "$LIBGMP_PACKAGE_URL" | tar xj
+export LD_LIBRARY_PATH=${CACHE_DIR}/libgmp-5.0.5:${LD_LIBARY_PATH}
+
 cd $BUILD_DIR
 #cp -R ghc /app
 ln -s $BUILD_DIR/ghc /app/ghc
@@ -52,8 +58,8 @@ GHC_BIN_DIR=/app/ghc/bin
 GHC_BIN=$GHC_BIN_DIR/ghc
 CABAL_BIN=$BUILD_DIR/.cabal/bin/cabal
 
-mkdir bin lib
-ln -s /usr/lib/libgmp.so.3 lib/libgmp.so
+#mkdir bin lib
+#ln -s /usr/lib/libgmp.so.3 lib/libgmp.so
 
 #echo "DEBUG:"
 #ls -al lib
