@@ -30,9 +30,42 @@ fi
 
 fi
 
-cp -R ghc /app
-
+echo -n "-----> Bundling GHC... "
 GHC_VERSION=`ghc/bin/ghc --version | perl -n -e '/version (\d\.\d\.\d)/ && print $1'`
-echo "-----> Bundling GHC version $GHC_VERSION"
+cp -R ghc /app
+echo "version $GHC_VERSION"
 
-exit 1
+echo -n "-----> Bundling Cabal... "
+CABAL_VERSION=`.cabal/bin/cabal --version | perl -n -e '/using version ([0-9\.]+) of the Cabal library/ && print $1'`
+CABAL_BIN=`pwd`/.cabal/bin/cabal
+echo "version $CABAL_VERSION"
+
+
+echo ""
+echo "Running pre-compile actions..."
+echo -n "-----> Configuring ghc-pkg... "
+ghc/bin/ghc-pkg describe base > base.conf
+sed -i "s#ld-options:#ld-options: -L`pwd`/lib#" base.conf
+ghc/bin/ghc-pkg update base.conf > /dev/null 2>&1
+rm base.conf
+echo "done"
+
+echo -n "-----> Updating Cabal... "
+export PATH=/app/ghc/bin:$PATH
+.cabal/bin/cabal update
+echo "done"
+
+
+echo ""
+echo "Beginning compile..."
+cd $BUILD_DIR
+echo -n "-----> Running cabal install... "
+$CABAL_BIN install
+echo "done"
+
+
+echo ""
+echo "Running post-compile actions..."
+echo -n "-----> Cleaning up..."
+echo "done"
+
