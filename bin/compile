@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -e
+
+BUILD_DIR=$1
+CACHE_DIR=$2
+
+echo "Called with BUILD_DIR=$BUILD_DIR"
+echo "Called with CACHE_DIR=$CACHE_DIR"
+
+exit 1
