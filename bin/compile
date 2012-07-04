@@ -46,7 +46,7 @@ fi
 echo -n "-----> Installing... "
 cd $BUILD_DIR
 #cp -R ghc /app
-ln -s ghc /app/ghc
+ln -s $BUILD_DIR/ghc /app/ghc
 
 GHC_BIN_DIR=/app/ghc/bin
 GHC_BIN=$GHC_BIN_DIR/ghc
@@ -55,8 +55,8 @@ CABAL_BIN=$BUILD_DIR/.cabal/bin/cabal
 mkdir bin lib
 ln -s /usr/lib/libgmp.so.3 lib/libgmp.so
 
-echo "DEBUG:"
-ls -al lib
+#echo "DEBUG:"
+#ls -al lib
 
 echo "done"
 
