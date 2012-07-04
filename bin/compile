@@ -14,7 +14,7 @@ mkdir -p $CACHE_DIR
 cd $CACHE_DIR
 
 echo "DEBUG:"
-ls -al /usr/local/lib/*gmp*
+ls -al /usr/lib/*gmp*
 
 if [ ! -e ghc -o ! -e .cabal ]; then
   echo ""
