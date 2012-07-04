@@ -1,11 +1,35 @@
 #!/usr/bin/env bash
 
+GHC_PACKAGE_URL="http://s3.amazonaws.com/heroku-buildpack-haskell/ghc.tar.gz"
+CABAL_PACKAGE_URL="http://s3.amazonaws.com/heroku-buildpack-haskell/cabal.tar.gz"
+
 set -e
 
 BUILD_DIR=$1
 CACHE_DIR=$2
 
-echo "Called with BUILD_DIR=$BUILD_DIR"
-echo "Called with CACHE_DIR=$CACHE_DIR"
+cd $CACHE_DIR
+
+if [ ! -e ghc -o ! -e .cabal ]; then
+echo ""
+echo "Preparing Haskell Platform..."
+
+if [ ! -e ghc ]; then
+echo -n "-----> Fetching GHC... "
+curl --silent --max-time 120 -L "$GHC_PACKAGE_URL" | tar xz
+echo "done"
+fi
+
+if [ ! -e .cabal ]; then
+echo -n "-----> Fetching Cabal... "
+curl --silent --max-time 120 -L "$CABAL_PACKAGE_URL" | tar xz
+echo "done"
+fi
+
+fi
+
+
+GHC_VERSION=`ghc/bin/ghc --version | perl -n -e '/version (\d\.\d\.\d)/ && print $1`
+echo "-----> Bundling GHC version $GHC_VERSION"
 
 exit 1
