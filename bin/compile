@@ -45,7 +45,8 @@ fi
 
 echo -n "-----> Installing... "
 cd $BUILD_DIR
-cp -R ghc /app
+#cp -R ghc /app
+ln -s ghc /app/ghc
 
 GHC_BIN_DIR=/app/ghc/bin
 GHC_BIN=$GHC_BIN_DIR/ghc
@@ -53,6 +54,10 @@ CABAL_BIN=$BUILD_DIR/.cabal/bin/cabal
 
 mkdir bin lib
 ln -s /usr/lib/libgmp.so.3 lib/libgmp.so
+
+echo "DEBUG:"
+ls -al lib
+
 echo "done"
 
 
@@ -70,6 +75,8 @@ echo "Running pre-compile actions:"
 echo -n "-----> Configuring ghc-pkg... "
 $GHC_BIN_DIR/ghc-pkg describe base > base.conf
 sed -i "s#ld-options:#ld-options: -L`pwd`/lib#" base.conf
+echo "DEBUG:"
+fgrep 'ld-options:' base.conf
 $GHC_BIN_DIR/ghc-pkg update base.conf > /dev/null 2>&1
 rm base.conf
 echo "done"
@@ -90,12 +97,12 @@ echo "done"
 
 echo ""
 echo "Running post-compile actions:"
-echo -n "-----> Caching GHC..."
+echo -n "-----> Caching GHC... "
 rm -rf $CACHE_DIR/ghc
 cp -R ghc $CACHE_DIR/ghc
 echo "done"
 
-echo -n "-----> Caching GHC..."
+echo -n "-----> Caching GHC... "
 rm -rf $CACHE_DIR/.cabal
 cp -R .cabal $CACHE_DIR/.cabal
 echo "done"
