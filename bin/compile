@@ -8,6 +8,8 @@ set -e
 BUILD_DIR=$1
 CACHE_DIR=$2
 
+mkdir -p $CACHE_DIR
+
 cd $CACHE_DIR
 
 if [ ! -e ghc -o ! -e .cabal ]; then
