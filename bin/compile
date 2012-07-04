@@ -30,6 +30,7 @@ fi
 
 fi
 
+cp -R ghc /app
 
 GHC_VERSION=`ghc/bin/ghc --version | perl -n -e '/version (\d\.\d\.\d)/ && print $1'`
 echo "-----> Bundling GHC version $GHC_VERSION"
