@@ -57,8 +57,8 @@ GHC_BIN_DIR=/app/ghc/bin
 GHC_BIN=$GHC_BIN_DIR/ghc
 CABAL_BIN=$BUILD_DIR/.cabal/bin/cabal
 
-mkdir lib
-ln -s /usr/lib/libgmp.so.3 lib/libgmp.so
+#mkdir lib
+#ln -s /usr/lib/libgmp.so.3 lib/libgmp.so
 
 echo "done"
 
@@ -75,10 +75,10 @@ echo "-----> Using Cabal version $CABAL_VERSION"
 echo ""
 echo "Running pre-compile actions:"
 echo -n "-----> Configuring ghc-pkg... "
-#$GHC_BIN_DIR/ghc-pkg describe base > base.conf
-#sed -i "s#ld-options:#ld-options: -L`pwd`/lib#" base.conf
-#$GHC_BIN_DIR/ghc-pkg update base.conf > /dev/null 2>&1
-#rm base.conf
+$GHC_BIN_DIR/ghc-pkg describe base > base.conf
+sed -i "s#ld-options:#ld-options: -L`pwd`/lib#" base.conf
+$GHC_BIN_DIR/ghc-pkg update base.conf > /dev/null 2>&1
+rm base.conf
 echo "done"
 
 echo -n "-----> Updating Cabal... "
