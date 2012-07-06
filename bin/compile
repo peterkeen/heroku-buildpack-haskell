@@ -47,8 +47,8 @@ fi
 echo -n "-----> Installing... "
 
 cd $CACHE_DIR
-#curl --silent --max-time 30 -L "$LIBGMP_PACKAGE_URL" | tar xj
-#export LD_LIBRARY_PATH=${CACHE_DIR}/libgmp-5.0.5:${LD_LIBRARY_PATH}
+curl --silent --max-time 30 -L "$LIBGMP_PACKAGE_URL" | tar xj
+export LD_LIBRARY_PATH=${CACHE_DIR}/libgmp-5.0.5:${LD_LIBRARY_PATH}
 
 cd $BUILD_DIR
 ln -s $BUILD_DIR/ghc /app/ghc
