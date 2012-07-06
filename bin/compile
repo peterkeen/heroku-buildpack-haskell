@@ -9,22 +9,9 @@ set -e
 BUILD_DIR=$1
 CACHE_DIR=$2
 
-
-echo "Environment Debugging:"
-ls /usr/lib
-ls /usr/local/lib
-ls /lib
-find / -name 'libgmp*'
-
-# just fail, it won't work anyway
-exit 1
-
 mkdir -p $CACHE_DIR
 
 cd $CACHE_DIR
-
-echo "DEBUG:"
-ls -al /usr/lib/*gmp*
 
 if [ ! -e ghc -o ! -e .cabal ]; then
   echo ""
@@ -72,8 +59,8 @@ GHC_BIN_DIR=/app/ghc/bin
 GHC_BIN=$GHC_BIN_DIR/ghc
 CABAL_BIN=$BUILD_DIR/.cabal/bin/cabal
 
-#mkdir bin lib
-#ln -s /usr/lib/libgmp.so.3 lib/libgmp.so
+mkdir lib
+ln -s /usr/lib/libgmp.so.3 lib/libgmp.so
 
 #echo "DEBUG:"
 #ls -al lib
