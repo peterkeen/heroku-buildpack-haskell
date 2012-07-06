@@ -9,6 +9,16 @@ set -e
 BUILD_DIR=$1
 CACHE_DIR=$2
 
+
+echo "Environment Debugging:"
+ls /usr/lib
+ls /usr/local/lib
+ls /lib
+find / -name 'libgmp*'
+
+# just fail, it won't work anyway
+exit 1
+
 mkdir -p $CACHE_DIR
 
 cd $CACHE_DIR
