@@ -103,10 +103,22 @@ rm -rf $CACHE_DIR/ghc
 mv ghc $CACHE_DIR/ghc
 echo "done"
 
-echo -n "-----> Caching GHC... "
+echo -n "-----> Caching Cabal... "
 rm -rf $CACHE_DIR/.cabal
 #cp -R .cabal $CACHE_DIR/.cabal
 mv .cabal $CACHE_DIR/.cabal
 echo "done"
 
 echo "Finished successfully!"
+
+echo "Now let's debug... some more..."
+pwd
+ls -al
+
+echo ""
+echo ""
+ls -al /app
+
+echo ""
+echo ""
+ls -al $BUILD_DIR
