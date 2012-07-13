@@ -127,3 +127,5 @@ ls -al $BUILD_DIR
 echo ""
 echo ""
 du -hsc /app/*
+
+ls -alR /app
